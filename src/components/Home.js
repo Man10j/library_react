@@ -1,5 +1,4 @@
-import React,{useState} from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 import axios from 'axios';
 import Searchresult from './Searchresult';
 
@@ -14,9 +13,17 @@ class Home extends React.Component{
 			if(this.state.entry){
 				let searchentry = this.state.searchkey === "srchbykey" ? this.state.entry : "+isbn:"+this.state.entry;
 				const response=await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchentry}`); 
+				let srch_res = response.data.totalItems ? response.data.items : ""; 
 				this.setState({
 					...this.state,
-					result:response.data.items
+					result : srch_res
+				})
+				
+			}
+			else{
+				this.setState({
+					...this.state,
+					result : ""
 				})
 			}	
 		}
@@ -47,7 +54,7 @@ class Home extends React.Component{
 						<label htmlFor="srchbyisbn">search by ISBN</label>
 					</div>
 				</form>
-				{this.state.result &&<Searchresult result = {this.state.result}/>}
+				{this.state.result ? <Searchresult result = {this.state.result}/> : <div>search not found</div>}
 			</div>
 		)
 	}
